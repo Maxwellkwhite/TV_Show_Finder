@@ -90,13 +90,14 @@ class Filters(FlaskForm):
     with_type = SelectField("Type", choices=["Scripted", 
                                              "Documentary", 
                                              "Miniseries", 
-                                             "Reality", 
-                                             "Scripted", 
+                                             "Reality",  
                                              "Talk Show",
                                              "I Don't Care",])
     quality_of_show = SelectField("Quality of Show", choices=["I Don't Care", 
                                                               "Decent or Better", 
                                                               "Incredible"])
+    popularity = SelectField("Popularity of Show", choices=["Popular", 
+                                                            "Any Popularity",])
     submit = SubmitField("Show off")
 
 
@@ -134,13 +135,13 @@ def find_show():
         seasons = []
         episodes = []
         show_id = []
-        episode_runtimes = []
         homepage = []
         #sets the page limit at 150 to purposefully fail to get actual page total
         page_to_fail=150
         category = form.category.data
         with_type = form.with_type.data
         quality_of_show = form.quality_of_show.data
+        popularity = form.popularity.data
         #create blank type to fille the actual value into it
         type = ""
         if with_type == "Documentary":
@@ -163,6 +164,11 @@ def find_show():
             quality = 5
         elif quality_of_show == "Incredible":
             quality = 8.5
+        popularity_value = 0
+        if popularity == "Popular":
+            popularity_value = 1000
+        else:
+            popularity_value = 0
         param = {
         "include_adult":"true",
         "with_origin_country": ORIGIN_COUNTRY,
@@ -171,6 +177,7 @@ def find_show():
         "vote_count.gte": VOTE_COUNT_MIN,
         "page": page_to_fail,
         "with_type": type,
+        "vote_count.gte":popularity_value,
         }
         headers = {
             "Authorization": f"Bearer {API_KEY}",
@@ -190,6 +197,7 @@ def find_show():
                 "vote_count.gte": VOTE_COUNT_MIN,
                 "page": random.randint(1, max_pages),
                 "with_type": type,
+                "vote_count.gte":popularity_value,
                 }
                 headers = {
                     "Authorization": f"Bearer {API_KEY}",
@@ -207,6 +215,7 @@ def find_show():
                 "vote_count.gte": VOTE_COUNT_MIN,
                 "page": 1,
                 "with_type": type,
+                "vote_count.gte":popularity_value,
                 }
                 headers = {
                     "Authorization": f"Bearer {API_KEY}",
@@ -248,8 +257,8 @@ def find_show():
             seasons.append(show_season)
             show_episodes = data['number_of_episodes']
             episodes.append(show_episodes)
-            id = data['id']
-            show_id.append(id)
+            # id = data['id']
+            # show_id.append(id)
             homepage_link = data['homepage']
             homepage.append(homepage_link)
         return render_template('results.html', 
@@ -262,11 +271,14 @@ def find_show():
                                type=with_type,
                                seasons=seasons,
                                episodes=episodes,
-                               id=id,
+                            #    id=id,
                                homepage=homepage)
     return render_template("index.html", form=form)
 
-    
+@app.route('/', methods=["GET", "POST"])
+def find_movie():  
+      return render_template("index.html")
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()

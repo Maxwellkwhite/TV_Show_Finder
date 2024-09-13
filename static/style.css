@@ -9,6 +9,10 @@
     /* font-family: "Rubik", sans-serif; */
   }
   
+::selection {
+  background: rgb(179, 193, 255) !important;
+}
+
   .main-wrapper {
     max-width: 1662px;
     margin: 0 auto;
@@ -267,7 +271,7 @@
       overflow-y: auto;
     }
     .sl--link {
-      color: #04b7ac;
+      color: #527dab;
       margin-bottom: 15px;
     }
     .sl--card-nav-container {
@@ -474,3 +478,16 @@
     border: #527dab !important;
     margin: auto !important ;
   }
+.header1{
+  font-size: 50px !important;
+  text-align: center !important;
+  margin-top: 40px;
+}
+.landing_p{
+  text-align: center !important;
+}
+.btn-secondary{
+  margin-top: 30px;
+  margin: 15px;
+  width: 150px;
+}
