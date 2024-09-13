@@ -79,7 +79,7 @@
     font-weight: 300;
   }
   .content-reveal-btn {
-    background-color: #04b7ac;
+    background-color: #527dab;
   }
   .sl--show-card-info,
   .sl--close-card-info {
@@ -465,4 +465,12 @@
     .swiper-container {
       width: 920px;
     }
+  }
+
+  .btn-primary{
+    background-color: #527dab !important;
+    outline-color: #527dab !important;
+    outline: #527dab !important;
+    border: #527dab !important;
+    margin: auto !important ;
   }

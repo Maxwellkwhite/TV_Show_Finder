@@ -87,12 +87,13 @@ class Filters(FlaskForm):
                                                        "Talk",
                                                        "War & Politics",
                                                        "Western"])
-    with_type = SelectField("Type", choices=["I Don't Care",
+    with_type = SelectField("Type", choices=["Scripted", 
                                              "Documentary", 
                                              "Miniseries", 
                                              "Reality", 
                                              "Scripted", 
-                                             "Talk Show"])
+                                             "Talk Show",
+                                             "I Don't Care",])
     quality_of_show = SelectField("Quality of Show", choices=["I Don't Care", 
                                                               "Decent or Better", 
                                                               "Incredible"])
@@ -130,6 +131,11 @@ def find_show():
         list = []
         five_shows = []
         full_details = []
+        seasons = []
+        episodes = []
+        show_id = []
+        episode_runtimes = []
+        homepage = []
         #sets the page limit at 150 to purposefully fail to get actual page total
         page_to_fail=150
         category = form.category.data
@@ -235,26 +241,30 @@ def find_show():
                     full_details.remove(chosen_show)
                 except IndexError: #used because some may not have 5 data points
                     pass
-        return render_template('results.html', category=category, five_shows=five_shows, data=data, details=full_details)
+        for show in five_shows:
+            response = requests.get(f"https://api.themoviedb.org/3/tv/{show['id']}?language=en-US", headers=headers, params=param)
+            data = response.json()
+            show_season = data['number_of_seasons']
+            seasons.append(show_season)
+            show_episodes = data['number_of_episodes']
+            episodes.append(show_episodes)
+            id = data['id']
+            show_id.append(id)
+            homepage_link = data['homepage']
+            homepage.append(homepage_link)
+        return render_template('results.html', 
+                               category=category, 
+                               five_shows=five_shows, 
+                               data=data, 
+                               details=full_details,
+                               genres=form.category.data,
+                               quality=quality_of_show,
+                               type=with_type,
+                               seasons=seasons,
+                               episodes=episodes,
+                               id=id,
+                               homepage=homepage)
     return render_template("index.html", form=form)
-
-# @app.route("/results", methods =["GET", "POST"])
-# def results():
-#     param = {
-#     "include_adult":"true",
-#     "page": 1,
-#     "with_origin_country": "US",
-#     "with_genres": 35,
-#     "vote_average.gte":7,
-#     "vote_count.gte":25,
-#     }
-#     headers = {
-#         "Authorization": f"Bearer {API_KEY}",
-#         "accept": "application/json",
-#     }
-#     response = requests.get("https://api.themoviedb.org/3/discover/tv", headers=headers, params=param)
-#     data = response.text
-#     return render_template("results.html", data=data)
 
     
 @app.route('/register', methods=["GET", "POST"])
@@ -313,6 +323,10 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('all_coaches'))
+
+@app.route('/retry', methods=["GET", "POST"])
+def retry():
+    return redirect(url_for('find_show'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)
