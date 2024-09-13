@@ -63,14 +63,13 @@
             </div>
           </div>
         </div>
-
+        {%if five_shows[0]:%}
         <div class="sl-wrapper">
           <!-- Slider main container -->
           <div class="swiper-container">
             <!-- Additional required wrapper -->
             <div class="swiper-wrapper">
               <!-- Slides -->
-
               <div class="swiper-slide sl--slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
@@ -84,7 +83,6 @@
                       <p class="sl--card-content">Average Rating: {{five_shows[0]['vote_average']}}</p>
                       <div class="sl--link">LINK</div>
                     </div>
-
                     <!-- Card Nav GRP -->
                     <div class="sl--card-nav-container">
                       <!-- Reveal info btn -->
@@ -98,7 +96,8 @@
                   </div>
                 </div>
               </div>
-
+            {%endif%}
+            {%if five_shows[1]:%}
               <div class="swiper-slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
@@ -126,7 +125,8 @@
                   </div>
                 </div>
               </div>
-
+              {%endif%}
+              {%if five_shows[2]:%}
               <div class="swiper-slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
@@ -152,10 +152,11 @@
                       </div>
                     </div>
                     <!-- END: Card Nav GRP -->
-
                   </div>
                 </div>
               </div>
+            {%endif%}
+            {%if five_shows[3]:%}
               <div class="swiper-slide sl--slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
@@ -183,6 +184,8 @@
                   </div>
                 </div>
               </div>
+              {%endif%}
+              {%if five_shows[4]:%}
               <div class="swiper-slide sl--slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
@@ -210,6 +213,7 @@
                   </div>
                 </div>
               </div>
+              {%endif%}
             </div>
             <!-- If we need pagination -->
             <!-- <div class="swiper-pagination"></div> -->

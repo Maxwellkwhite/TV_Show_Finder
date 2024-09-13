@@ -208,10 +208,11 @@ def find_show():
                 }
                 response = requests.get("https://api.themoviedb.org/3/discover/tv", headers=headers, params=param)
                 data = response.json()
-            for x in range (100):
+            for x in range (data['total_results']):
                 if data['total_results'] <= 19 and data['total_results'] >= 1:
                     # x = data['results'][random.randint(0,data['total_results']-1)]['name']
-                    show = data['results'][random.randint(0,data['total_results']-1)]
+                    # show = data['results'][random.randint(0,data['total_results']-1)]
+                    show = data['results'][x]
                     list.append(show['name'])
                     full_details.append(show)
                 elif data['total_results'] == 0:
