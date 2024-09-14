@@ -101,18 +101,6 @@ class Filters(FlaskForm):
     submit = SubmitField("Find your show")
 
 
-
-# class InProgressTaskList(db.Model):
-#     __tablename__ = "in_progress_tasks"
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-#     # Create Foreign Key, "users.id" the users refers to the tablename of User.
-#     user_id: Mapped[int] = mapped_column(Integer, db.ForeignKey("users.id"))
-#     post: Mapped[str] = mapped_column(String(250), unique=False)
-#     completed: Mapped[int] = mapped_column(Integer, nullable=True)
-#     color: Mapped[str] = mapped_column(String(250))
-#     project: Mapped[str] = mapped_column(String(250))
-#     author = relationship("User", back_populates="tasks")
-
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -261,7 +249,7 @@ def find_show():
             # show_id.append(id)
             homepage_link = data['homepage']
             homepage.append(homepage_link)
-        return render_template('results.html', 
+        return render_template('tv_results.html', 
                                category=category, 
                                five_shows=five_shows, 
                                data=data, 
@@ -273,11 +261,12 @@ def find_show():
                                episodes=episodes,
                             #    id=id,
                                homepage=homepage)
-    return render_template("index.html", form=form)
+    return render_template("tv_index.html", form=form)
 
-@app.route('/', methods=["GET", "POST"])
-def find_movie():  
-      return render_template("index.html")
+@app.route('/movie', methods=["GET", "POST"])
+def find_movie():
+    form=Filters()
+    return render_template("movie_index.html", form=form)
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -339,6 +328,10 @@ def logout():
 @app.route('/retry', methods=["GET", "POST"])
 def retry():
     return redirect(url_for('find_show'))
+
+@app.route('/search-movie', methods=["GET", "POST"])
+def movie_redirect():
+    return render_template('movie_index.html')
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)
