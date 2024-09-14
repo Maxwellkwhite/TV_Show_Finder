@@ -71,7 +71,7 @@ class LoginForm(FlaskForm):
 
 # Create a form to login existing users
 class Filters(FlaskForm):
-    category = SelectField("Choose Category", choices=["Action & Adventure", 
+    category = SelectField(label="Choose Category", choices=["Action & Adventure", 
                                                        "Animation", 
                                                        "Comedy",
                                                        "Crime",
@@ -86,18 +86,18 @@ class Filters(FlaskForm):
                                                        "Soap",
                                                        "Talk",
                                                        "War & Politics",
-                                                       "Western"], render_kw={'class':'select_class'})
+                                                       "Western"], render_kw={'class':'form_class'})
     with_type = SelectField("Type", choices=["Scripted", 
                                              "Documentary", 
                                              "Miniseries", 
                                              "Reality",  
                                              "Talk Show",
-                                             "I Don't Care",])
+                                             "I Don't Care",], render_kw={'class':'form_class'})
     quality_of_show = SelectField("Quality of Show", choices=["I Don't Care", 
                                                               "Decent or Better", 
-                                                              "Incredible"])
+                                                              "Incredible"], render_kw={'class':'form_class'})
     popularity = SelectField("Popularity of Show", choices=["Popular", 
-                                                            "Any Popularity",])
+                                                            "Any Popularity",], render_kw={'class':'form_class'})
     submit = SubmitField("Find your show")
 
 

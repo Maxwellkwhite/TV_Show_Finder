@@ -28,13 +28,14 @@
         </p>
         <button type="button" class="btn btn-secondary">Switch to Movies Edition 🎥</button>
       </div>
-      <div class="sl-wrapper">
-        <div class="swiper-container2">
-          {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-          {{data}}
+        <div class="sl-wrapper">
+          <div class="verticalLine">
+            <div class="swiper-container2">
+              {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+            </div>
+          </div>
         </div>
-      </div>
-  <!-- <h1 class="header1">Welcome to Find It!</h1>
+        <!-- <h1 class="header1">Welcome to Find It!</h1>
   <p class="landing_p">Can't pick a show to start next? Struggling to find a movie you think will be good? <br>
   We have you covered. By selecting just a few filters, you'll get 5 shows/movies recommended to you.<br>
   Indecisiveness is in the past. Binge freely below.
