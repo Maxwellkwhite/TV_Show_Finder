@@ -266,6 +266,151 @@ def find_show():
 @app.route('/movie', methods=["GET", "POST"])
 def find_movie():
     form=Filters()
+    if form.validate_on_submit():
+        list = []
+        five_shows = []
+        full_details = []
+        seasons = []
+        episodes = []
+        show_id = []
+        homepage = []
+        #sets the page limit at 150 to purposefully fail to get actual page total
+        page_to_fail=150
+        category = form.category.data
+        with_type = form.with_type.data
+        quality_of_show = form.quality_of_show.data
+        popularity = form.popularity.data
+        #create blank type to fille the actual value into it
+        type = ""
+        if with_type == "Documentary":
+            type = 0
+        elif with_type == "Miniseries":
+            type = 2
+        elif with_type == "Reality":
+            type = 3
+        elif with_type == "Scripted":
+            type = 4
+        elif with_type == "Talk Show":
+            type = 5
+        elif with_type == "I Don't Care":
+            type = ''
+        # choices=["I Don't Care", "At least Decent", "Incredible"]
+        quality = 0
+        if quality_of_show == "I Don't Care":
+            quality = 0
+        elif quality_of_show == "Decent or Better":
+            quality = 5
+        elif quality_of_show == "Incredible":
+            quality = 8.5
+        popularity_value = 0
+        if popularity == "Popular":
+            popularity_value = 1000
+        else:
+            popularity_value = 0
+        param = {
+        "include_adult":"true",
+        "with_origin_country": ORIGIN_COUNTRY,
+        "with_genres": categories_dictionary[category],
+        "vote_average.gte": quality,
+        "vote_count.gte": VOTE_COUNT_MIN,
+        "page": page_to_fail,
+        "with_type": type,
+        "vote_count.gte":popularity_value,
+        }
+        headers = {
+            "Authorization": f"Bearer {API_KEY}",
+            "accept": "application/json",
+        }
+        response = requests.get("https://api.themoviedb.org/3/discover/tv", headers=headers, params=param)
+        data = response.json()
+        #if the results don't produce a value, rerun the API using new API values
+        if data['results'] == []:
+            try:
+                max_pages=data['total_pages']-1
+                param = {
+                "include_adult":"true",
+                "with_origin_country": ORIGIN_COUNTRY,
+                "with_genres": categories_dictionary[category],
+                "vote_average.gte": quality,
+                "vote_count.gte": VOTE_COUNT_MIN,
+                "page": random.randint(1, max_pages),
+                "with_type": type,
+                "vote_count.gte":popularity_value,
+                }
+                headers = {
+                    "Authorization": f"Bearer {API_KEY}",
+                    "accept": "application/json",
+                }
+                response = requests.get("https://api.themoviedb.org/3/discover/tv", headers=headers, params=param)
+                data = response.json()
+            except ValueError:
+                x=data['total_pages']
+                param = {
+                "include_adult":"true",
+                "with_origin_country": ORIGIN_COUNTRY,
+                "with_genres": categories_dictionary[category],
+                "vote_average.gte": quality,
+                "vote_count.gte": VOTE_COUNT_MIN,
+                "page": 1,
+                "with_type": type,
+                "vote_count.gte":popularity_value,
+                }
+                headers = {
+                    "Authorization": f"Bearer {API_KEY}",
+                    "accept": "application/json",
+                }
+                response = requests.get("https://api.themoviedb.org/3/discover/tv", headers=headers, params=param)
+                data = response.json()
+            for x in range (data['total_results']):
+                if data['total_results'] <= 19 and data['total_results'] >= 1:
+                    # x = data['results'][random.randint(0,data['total_results']-1)]['name']
+                    # show = data['results'][random.randint(0,data['total_results']-1)]
+                    show = data['results'][x]
+                    list.append(show['name'])
+                    full_details.append(show)
+                elif data['total_results'] == 0:
+                    pass
+                else:
+                    # x = data['results'][random.randint(0,19)]['name']
+                    show = data['results'][random.randint(0,19)]
+                    list.append(show['name'])
+                    full_details.append(show)
+            # myset = sorted(set(list))
+            for x in range(5):
+                try:
+                    # chosen_show = random.choice(myset)
+                    # five_shows.append(chosen_show)
+                    # myset.remove(chosen_show)
+                    chosen_show = random.choice(full_details)
+                    while chosen_show in five_shows:
+                        chosen_show = random.choice(full_details)
+                    five_shows.append(chosen_show)
+                    full_details.remove(chosen_show)
+                except IndexError: #used because some may not have 5 data points
+                    pass
+        for show in five_shows:
+            response = requests.get(f"https://api.themoviedb.org/3/tv/{show['id']}?language=en-US", headers=headers, params=param)
+            data = response.json()
+            show_season = data['number_of_seasons']
+            seasons.append(show_season)
+            show_episodes = data['number_of_episodes']
+            episodes.append(show_episodes)
+            # id = data['id']
+            # show_id.append(id)
+            homepage_link = data['homepage']
+            homepage.append(homepage_link)
+        return render_template('tv_results.html', 
+                               category=category, 
+                               five_shows=five_shows, 
+                               data=data, 
+                               details=full_details,
+                               genres=form.category.data,
+                               quality=quality_of_show,
+                               type=with_type,
+                               seasons=seasons,
+                               episodes=episodes,
+                            #    id=id,
+                               homepage=homepage)
     return render_template("movie_index.html", form=form)
 
 @app.route('/register', methods=["GET", "POST"])
@@ -331,7 +476,7 @@ def retry():
 
 @app.route('/search-movie', methods=["GET", "POST"])
 def movie_redirect():
-    return render_template('movie_index.html')
+    return redirect(url_for('find_movie'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)
