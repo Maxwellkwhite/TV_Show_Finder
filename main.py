@@ -70,7 +70,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Let Me In!")
 
 # Create a form to login existing users
-class Filters(FlaskForm):
+class TV_Filters(FlaskForm):
     category = SelectField(label="Choose Category", choices=["Action & Adventure", 
                                                        "Animation", 
                                                        "Comedy",
@@ -115,7 +115,7 @@ with app.app_context():
 
 @app.route('/', methods=["GET", "POST"])
 def find_show():
-    form=Filters()
+    form=TV_Filters()
     if form.validate_on_submit():
         list = []
         five_shows = []
@@ -265,7 +265,7 @@ def find_show():
 
 @app.route('/movie', methods=["GET", "POST"])
 def find_movie():
-    form=Filters()
+    form=TV_Filters()
     if form.validate_on_submit():
         list = []
         five_shows = []
