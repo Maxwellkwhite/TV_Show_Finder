@@ -15,16 +15,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="static/style.css"/>
   </body>
-  <h1 class="header1">Welcome to Find It!</h1>
+  <div class="main-wrapper">
+    <div class="sl-main-container">
+      <div class="sl-header-wrapper">
+        <h3>Welcome to Find It!</h3>
+        <br>
+        <h5>TV Show Edition 📺</h5>
+        <br>
+        <p>Can't choose your next binge? Well look no further...<br><br>
+        Set the filters and you'll have your next show in seconds! <br><br>
+        Yes, it's really that easy.
+        </p>
+        <button type="button" class="btn btn-secondary">Switch to Movies Edition 🎥</button>
+      </div>
+      <div class="sl-wrapper">
+        <div class="swiper-container2">
+          {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+          {{data}}
+        </div>
+      </div>
+  <!-- <h1 class="header1">Welcome to Find It!</h1>
   <p class="landing_p">Can't pick a show to start next? Struggling to find a movie you think will be good? <br>
   We have you covered. By selecting just a few filters, you'll get 5 shows/movies recommended to you.<br>
   Indecisiveness is in the past. Binge freely below.
-  </p>
-  <div style="text-align:center;">
+  </p> -->
+  <!-- <div style="text-align:center;">
     <button type="button" class="btn btn-secondary">Find TV Shows</button>
     <button type="button" class="btn btn-secondary">Find Movies</button>
-  </div>
-  {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-  {{data}}
+  </div> -->
+
 
   

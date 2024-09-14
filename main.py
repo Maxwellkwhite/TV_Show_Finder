@@ -86,7 +86,7 @@ class Filters(FlaskForm):
                                                        "Soap",
                                                        "Talk",
                                                        "War & Politics",
-                                                       "Western"])
+                                                       "Western"], render_kw={'class':'select_class'})
     with_type = SelectField("Type", choices=["Scripted", 
                                              "Documentary", 
                                              "Miniseries", 
@@ -98,7 +98,7 @@ class Filters(FlaskForm):
                                                               "Incredible"])
     popularity = SelectField("Popularity of Show", choices=["Popular", 
                                                             "Any Popularity",])
-    submit = SubmitField("Show off")
+    submit = SubmitField("Find your show")
 
 
 
