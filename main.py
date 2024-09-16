@@ -322,6 +322,8 @@ def find_movie():
         episodes = []
         show_id = []
         homepage = []
+        budget_list = []
+        runtime_list = []
         #sets the page limit at 501 to purposefully fail to get actual page total
         page_to_fail=500
         category = form.category.data
@@ -421,20 +423,29 @@ def find_movie():
                     full_details.remove(chosen_movie)
                 except IndexError: #used because some may not have 5 data points
                     pass
-        # for show in five_movies:
-        #     response = requests.get(f"https://api.themoviedb.org/3/tv/{show['id']}?language=en-US", headers=headers, params=param)
-        #     movie_data = response.json()
-        #     # id = data['id']
-        #     # show_id.append(id)
+        for show in five_movies:
+            response = requests.get(f"https://api.themoviedb.org/3/movie/{show['id']}?language=en-US", headers=headers, params=param)
+            movie_data = response.json()
+            homepage_link = movie_data['homepage']
+            homepage.append(homepage_link)
+            budget = movie_data['budget']
+            budget_list.append(budget)
+            runtime = movie_data['runtime']
+            runtime_list.append(runtime)
+            # id = data['id']
+            # show_id.append(id)
         return render_template('movie_results.html', 
                                category=category, 
-                               five_shows=five_movies, 
+                               five_movies=five_movies, 
                                data=movie_data, 
                                details=full_details,
                                genres=form.category.data,
-                               quality=five_movies,
+                               quality=quality_of_movie,
                                seasons=seasons,
-                               episodes=episodes,)
+                               episodes=episodes,
+                               homepage=homepage,
+                               budget=budget_list,
+                               runtime=runtime_list)
     return render_template("movie_index.html", form=form)
 
 @app.route('/register', methods=["GET", "POST"])

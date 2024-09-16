@@ -48,15 +48,22 @@
             <!-- Additional required wrapper -->
             <div class="swiper-wrapper">
               <!-- Slides -->
-              {%if five_shows[0]:%}
+              {%if five_movies[0]:%}
               <div class="swiper-slide sl--slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
                   <div class="sl-gradient"></div>
-                  <img src="https://image.tmdb.org/t/p/original{{five_shows[0]['poster_path']}}" width="325">
+                  <img src="https://image.tmdb.org/t/p/original{{five_movies[0]['poster_path']}}" width="325">
                   <div class="sl--content-wrapper sl--content-wrapper-inactive">
                     <div class="sl--content-container sl--card-hide">
-                      <h2>{{five_shows[0]['title']}}</h2>
+                      <h2>{{five_movies[0]['title']}}</h2>
+                      <p class="sl--card-content">{{five_movies[0]['overview']}}</p>
+                      <p class="sl--card-content">Release Year: {{five_movies[0]['release_date'][:4]}}</p>
+                      <p class="sl--card-content">Average Rating: {{five_movies[0]['vote_average']}}</p>
+                      <p class="sl--card-content">Runtime: {{runtime[0]}} min</p>
+                      {%if homepage[0]:%}
+                        <a href="{{homepage[0]}}" target="_blank" rel="noopener noreferrer">Link (Some not available)</a>
+                      {%endif%}
                     </div>
                     <!-- Card Nav GRP -->
                     <div class="sl--card-nav-container">
@@ -72,15 +79,22 @@
                 </div>
               </div>
             {%endif%}
-            {%if five_shows[1]:%}
+            {%if five_movies[1]:%}
               <div class="swiper-slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
                   <div class="sl-gradient"></div>
-                  <img src="https://image.tmdb.org/t/p/original{{five_shows[1]['poster_path']}}" width="325">
+                  <img src="https://image.tmdb.org/t/p/original{{five_movies[1]['poster_path']}}" width="325">
                   <div class="sl--content-wrapper sl--content-wrapper-inactive">
                     <div class="sl--content-container sl--card-hide">
-                      <h2>{{five_shows[1]['title']}}</h2>
+                      <h2>{{five_movies[1]['title']}}</h2>
+                      <p class="sl--card-content">{{five_movies[1]['overview']}}</p>
+                      <p class="sl--card-content">Release Year: {{five_movies[1]['release_date'][:4]}}</p>
+                      <p class="sl--card-content">Average Rating: {{five_movies[1]['vote_average']}}</p>
+                      <p class="sl--card-content">Runtime: {{runtime[1]}} min</p>
+                      {%if homepage[1]:%}
+                        <a href="{{homepage[1]}}" target="_blank" rel="noopener noreferrer">Link (Some not available)</a>
+                      {%endif%}
                     </div>
 
                     <!-- Card Nav GRP -->
@@ -97,16 +111,23 @@
                 </div>
               </div>
               {%endif%}
-              {%if five_shows[2]:%}
+              {%if five_movies[2]:%}
               <div class="swiper-slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
                   <div class="sl-gradient"></div>
-                  <img src="https://image.tmdb.org/t/p/original{{five_shows[2]['poster_path']}}" width="325">
+                  <img src="https://image.tmdb.org/t/p/original{{five_movies[2]['poster_path']}}" width="325">
 
                   <div class="sl--content-wrapper sl--content-wrapper-inactive">
                     <div class="sl--content-container sl--card-hide">
-                        <h2>{{five_shows[2]['title']}}</h2>
+                        <h2>{{five_movies[2]['title']}}</h2>
+                        <p class="sl--card-content">{{five_movies[2]['overview']}}</p>
+                        <p class="sl--card-content">Release Year: {{five_movies[2]['release_date'][:4]}}</p>
+                        <p class="sl--card-content">Average Rating: {{five_movies[2]['vote_average']}}</p>
+                        <p class="sl--card-content">Runtime: {{runtime[2]}} min</p>
+                        {%if homepage[2]:%}
+                          <a href="{{homepage[2]}}" target="_blank" rel="noopener noreferrer">Link (Some not available)</a>
+                        {%endif%}
                     </div>
 
                     <!-- Card Nav GRP -->
@@ -123,15 +144,22 @@
                 </div>
               </div>
             {%endif%}
-            {%if five_shows[3]:%}
+            {%if five_movies[3]:%}
               <div class="swiper-slide sl--slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
                   <div class="sl-gradient"></div>
-                  <img src="https://image.tmdb.org/t/p/original{{five_shows[3]['poster_path']}}" width="325">
+                  <img src="https://image.tmdb.org/t/p/original{{five_movies[3]['poster_path']}}" width="325">
                   <div class="sl--content-wrapper sl--content-wrapper-inactive">
                     <div class="sl--content-container sl--card-hide">
-                        <h2>{{five_shows[3]['title']}}</h2>
+                        <h2>{{five_movies[3]['title']}}</h2>
+                        <p class="sl--card-content">{{five_movies[3]['overview']}}</p>
+                        <p class="sl--card-content">Release Year: {{five_movies[3]['release_date'][:4]}}</p>
+                        <p class="sl--card-content">Average Rating: {{five_movies[3]['vote_average']}}</p>
+                        <p class="sl--card-content">Runtime: {{runtime[3]}} min</p>
+                        {%if homepage[3]:%}
+                          <a href="{{homepage[3]}}" target="_blank" rel="noopener noreferrer">Link (Some not available)</a>
+                        {%endif%}
                     </div>
 
                     <!-- Card Nav GRP -->
@@ -148,15 +176,22 @@
                 </div>
               </div>
               {%endif%}
-              {%if five_shows[4]:%}
+              {%if five_movies[4]:%}
               <div class="swiper-slide sl--slide">
                 <div class="slide-cover"></div>
                 <div class="sl-card-wrapper">
                   <div class="sl-gradient"></div>
-                  <img src="https://image.tmdb.org/t/p/original{{five_shows[4]['poster_path']}}" width="325">
+                  <img src="https://image.tmdb.org/t/p/original{{five_movies[4]['poster_path']}}" width="325">
                   <div class="sl--content-wrapper sl--content-wrapper-inactive">
                     <div class="sl--content-container sl--card-hide">
-                        <h2>{{five_shows[4]['title']}}</h2>
+                        <h2>{{five_movies[4]['title']}}</h2>
+                        <p class="sl--card-content">{{five_movies[4]['overview']}}</p>
+                        <p class="sl--card-content">Release Year: {{five_movies[4]['release_date'][:4]}}</p>
+                        <p class="sl--card-content">Average Rating: {{five_movies[4]['vote_average']}}</p>
+                        <p class="sl--card-content">Runtime: {{runtime[4]}} min</p>
+                        {%if homepage[4]:%}
+                          <a href="{{homepage[4]}}" target="_blank" rel="noopener noreferrer">Link (Some not available)</a>
+                        {%endif%}
                     </div>
 
                     <!-- Card Nav GRP -->
