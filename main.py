@@ -15,10 +15,14 @@ import os
 import requests
 import random
 import json
+import stripe
 
 API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3MmMwNDI3MmEzMjZhZDNiNTgzODdlMGVmYTkzOTNiNiIsIm5iZiI6MTcyNTYzNzkyOS4zMDg3NzgsInN1YiI6IjY2NmIzNDcyMmRmYzNhMjI1ZTVhYjRlMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dt6CNZe1TspH9bG5Y-kWE51xzS3sXRwoJGHnSqhRo_4'
 ORIGIN_COUNTRY = 'US'
 VOTE_COUNT_MIN = 25
+stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
+
+
 categories_dictionary = {'Action & Adventure': 10759, 
                   'Animation': 16, 
                   'Comedy': 35, 
@@ -512,6 +516,13 @@ def retry():
 @app.route('/search-movie', methods=["GET", "POST"])
 def movie_redirect():
     return redirect(url_for('find_movie'))
+
+# stripe.checkout.Session.create (
+#     line_items =[{"price": '{{PRICE_ID}}', 
+#                   "quantity": 1}], 
+#                   mode="payment",
+#                   success_url="https://example.com/success",
+# )
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)
