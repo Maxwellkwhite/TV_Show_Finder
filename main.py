@@ -517,12 +517,33 @@ def retry():
 def movie_redirect():
     return redirect(url_for('find_movie'))
 
-# stripe.checkout.Session.create (
-#     line_items =[{"price": '{{PRICE_ID}}', 
-#                   "quantity": 1}], 
-#                   mode="payment",
-#                   success_url="https://example.com/success",
-# )
+YOUR_DOMAIN = 'http://127.0.0.1:5002'
+
+@app.route('/create-checkout-session', methods=['POST', 'GET'])
+def create_checkout_session():
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[{
+                'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                'name': 'Movie Access',},
+                'unit_amount': 500,},
+                'quantity': 1,}],
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success',
+            cancel_url=YOUR_DOMAIN + '/cancel',)
+    except Exception as e:
+        return str(e)
+    return redirect(checkout_session.url, code=303)
+
+@app.route('/cancel', methods=['POST', 'GET'])
+def cancel_session():
+    return render_template('cancel.html')
+
+@app.route('/success', methods=['POST', 'GET'])
+def success_session():
+    return render_template('success.html')
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)
