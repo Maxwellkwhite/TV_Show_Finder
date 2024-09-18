@@ -571,9 +571,10 @@ def fulfill_checkout(session_id):
     else:
         print("Paid")
 
-endpoint_secret = 'whsec_480f7578d8e7faa4ddb0e989449b9ccc506a88fc599714f137bcb48cf56c5ad9'
+endpoint_secret = os.environ.get("WEBHOOK_SECRET")
 
 @csrf_exempt
+@app.route('/stripe_webhooks', methods=['POST'])
 def my_webhook_view(request):
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
