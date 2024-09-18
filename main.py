@@ -16,6 +16,8 @@ import requests
 import random
 import json
 import stripe
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3MmMwNDI3MmEzMjZhZDNiNTgzODdlMGVmYTkzOTNiNiIsIm5iZiI6MTcyNTYzNzkyOS4zMDg3NzgsInN1YiI6IjY2NmIzNDcyMmRmYzNhMjI1ZTVhYjRlMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dt6CNZe1TspH9bG5Y-kWE51xzS3sXRwoJGHnSqhRo_4'
 ORIGIN_COUNTRY = 'US'
@@ -544,6 +546,57 @@ def cancel_session():
 @app.route('/success', methods=['POST', 'GET'])
 def success_session():
     return render_template('success.html')
+
+def fulfill_checkout(session_id):
+    print("Fulfilling Checkout Session", session_id)
+
+    # TODO: Make this function safe to run multiple times,
+    # even concurrently, with the same session ID
+
+    # TODO: Make sure fulfillment hasn't already been
+    # peformed for this Checkout Session
+
+    # Retrieve the Checkout Session from the API with line_items expanded
+    checkout_session = stripe.checkout.Session.retrieve(
+    session_id,
+    expand=['line_items'],)
+
+    # Check the Checkout Session's payment_status property
+    # to determine if fulfillment should be peformed
+    if checkout_session.payment_status != 'unpaid':
+    # TODO: Perform fulfillment of the line items
+        print('Unpaid')
+    # TODO: Record/save fulfillment status for this
+    # Checkout Session
+    else:
+        print("Paid")
+
+endpoint_secret = 'whsec_480f7578d8e7faa4ddb0e989449b9ccc506a88fc599714f137bcb48cf56c5ad9'
+
+@csrf_exempt
+def my_webhook_view(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+        payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    if (
+        event['type'] == 'checkout.session.completed'
+        or event['type'] == 'checkout.session.async_payment_succeeded'
+    ):
+        fulfill_checkout(event['data']['object']['id'])
+
+    return HttpResponse(status=200)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)
