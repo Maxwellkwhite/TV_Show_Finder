@@ -79,7 +79,7 @@ class Base(DeclarativeBase):
     pass
 # db_path = os.path.abspath(os.path.join(os.path.dirname("Final_Projects/Check_List_Site/instance"), "tasks.db"))
 # app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///coach_listing.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -161,11 +161,11 @@ class User(UserMixin, db.Model):
     email: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(100))
+    premium: Mapped[int] = mapped_column(Integer)
     # tasks = relationship("InProgressTaskList", back_populates="author")
 
 with app.app_context():
     db.create_all()
-
 
 @app.route('/', methods=["GET", "POST"])
 def find_show():
@@ -320,6 +320,8 @@ def find_show():
 @app.route('/movie', methods=["GET", "POST"])
 def find_movie():
     form=Movie_Filters()
+    if not current_user.is_authenticated:
+       return redirect(url_for('login'))
     if form.validate_on_submit():
         list = []
         five_movies = []
@@ -476,12 +478,13 @@ def register():
             email=form.email.data,
             name=form.name.data,
             password=hash_and_salted_password,
+            premium=0
         )
         db.session.add(new_user)
         db.session.commit()
         # This line will authenticate the user with Flask-Login
         login_user(new_user)
-        return redirect(url_for("all_coaches"))
+        return redirect(url_for("find_movie"))
     return render_template("register.html", form=form, current_user=current_user)
 
 @app.route('/login', methods=["GET", "POST"])
@@ -502,14 +505,14 @@ def login():
             return redirect(url_for('login'))
         else:
             login_user(user)
-            return redirect(url_for('all_coaches'))
+            return redirect(url_for('find_movie'))
 
     return render_template("login.html", form=form, current_user=current_user)
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('all_coaches'))
+    return redirect(url_for('find_movie'))
 
 @app.route('/retry', methods=["GET", "POST"])
 def retry():
