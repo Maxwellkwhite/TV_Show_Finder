@@ -38,10 +38,7 @@
             </div>
           </div>
         </div>
-        
-        <form action="/create-checkout-session" method="POST">
-          <button type="submit" id="checkout-button">Checkout</button>
-        </form>
+
 {%endif%}
 {% if current_user.premium == 0: %}
 <div class="main-wrapper">
@@ -73,7 +70,7 @@
             <div class="card-footer">
             <span class="text-title">$5.00</span>
               <form action="/create-checkout-session" method="POST">
-                <button type="submit" id="checkout-button" class="btn btn-outline-light">🛒</button>
+                <button type="submit" id="checkout-button" class="btn btn-outline-dark">Checkout 🛒</button>
               </form>
           </div></div>
             </div>

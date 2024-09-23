@@ -614,6 +614,8 @@ label{
 .text-title{
   font-size: 30px;
 }
-.btn-outline-light :hover{
-  background-color: blue !important;
+
+.btn-outline-dark:hover{
+  background-color: #527dab !important;
+  border: #527dab !important;
 }

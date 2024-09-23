@@ -77,7 +77,7 @@ def load_user(user_id):
 
 class Base(DeclarativeBase):
     pass
-# db_path = os.path.abspath(os.path.join(os.path.dirname("Final_Projects/Check_List_Site/instance"), "tasks.db"))
+# db_path = os.path.abspath(os.path.join(os.path.dirname("./instance"), "users.db"))
 # app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(model_class=Base)
@@ -548,7 +548,12 @@ def cancel_session():
 
 @app.route('/success', methods=['POST', 'GET'])
 def success_session():
-    return render_template('success.html')
+    with app.app_context():
+        g_user = current_user.get_id()
+        completed_update = db.session.execute(db.select(User).where(User.id == g_user)).scalar()
+        completed_update.premium = 1
+        db.session.commit()
+    return redirect(url_for('find_movie'))
 
 def fulfill_checkout(session_id):
     print("Fulfilling Checkout Session", session_id)
