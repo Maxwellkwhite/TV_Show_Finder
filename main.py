@@ -555,57 +555,57 @@ def success_session():
         db.session.commit()
     return redirect(url_for('find_movie'))
 
-def fulfill_checkout(session_id):
-    print("Fulfilling Checkout Session", session_id)
+# def fulfill_checkout(session_id):
+#     print("Fulfilling Checkout Session", session_id)
 
-    # TODO: Make this function safe to run multiple times,
-    # even concurrently, with the same session ID
+#     # TODO: Make this function safe to run multiple times,
+#     # even concurrently, with the same session ID
 
-    # TODO: Make sure fulfillment hasn't already been
-    # peformed for this Checkout Session
+#     # TODO: Make sure fulfillment hasn't already been
+#     # peformed for this Checkout Session
 
-    # Retrieve the Checkout Session from the API with line_items expanded
-    checkout_session = stripe.checkout.Session.retrieve(
-    session_id,
-    expand=['line_items'],)
+#     # Retrieve the Checkout Session from the API with line_items expanded
+#     checkout_session = stripe.checkout.Session.retrieve(
+#     session_id,
+#     expand=['line_items'],)
 
-    # Check the Checkout Session's payment_status property
-    # to determine if fulfillment should be peformed
-    if checkout_session.payment_status != 'unpaid':
-    # TODO: Perform fulfillment of the line items
-        print('Unpaid')
-    # TODO: Record/save fulfillment status for this
-    # Checkout Session
-    else:
-        print("Paid")
+#     # Check the Checkout Session's payment_status property
+#     # to determine if fulfillment should be peformed
+#     if checkout_session.payment_status != 'unpaid':
+#     # TODO: Perform fulfillment of the line items
+#         print('Unpaid')
+#     # TODO: Record/save fulfillment status for this
+#     # Checkout Session
+#     else:
+#         print("Paid")
 
-endpoint_secret = os.environ.get("WEBHOOK_SECRET")
+# endpoint_secret = os.environ.get("WEBHOOK_SECRET")
 
-@csrf_exempt
-@app.route('/stripe_webhooks', methods=['POST'])
-def my_webhook_view(request):
-    payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    event = None
+# @csrf_exempt
+# @app.route('/stripe_webhooks', methods=['POST'])
+# def my_webhook_view(request):
+#     payload = request.body
+#     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+#     event = None
 
-    try:
-        event = stripe.Webhook.construct_event(
-        payload, sig_header, endpoint_secret
-        )
-    except ValueError as e:
-        # Invalid payload
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        return HttpResponse(status=400)
+#     try:
+#         event = stripe.Webhook.construct_event(
+#         payload, sig_header, endpoint_secret
+#         )
+#     except ValueError as e:
+#         # Invalid payload
+#         return HttpResponse(status=400)
+#     except stripe.error.SignatureVerificationError as e:
+#         # Invalid signature
+#         return HttpResponse(status=400)
 
-    if (
-        event['type'] == 'checkout.session.completed'
-        or event['type'] == 'checkout.session.async_payment_succeeded'
-    ):
-        fulfill_checkout(event['data']['object']['id'])
+#     if (
+#         event['type'] == 'checkout.session.completed'
+#         or event['type'] == 'checkout.session.async_payment_succeeded'
+#     ):
+#         fulfill_checkout(event['data']['object']['id'])
 
-    return HttpResponse(status=200)
+#     return HttpResponse(status=200)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)
