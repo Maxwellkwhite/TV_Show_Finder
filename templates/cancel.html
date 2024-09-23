@@ -7,8 +7,39 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <section>
-    <p>Forgot to add something to your cart? Shop around then come back to pay!</p>
-  </section>
-</body>
-</html>
+  <div class="main-wrapper">
+    <div class="sl-main-container">
+      <div class="sl-header-wrapper">
+        <h3>Find It!</h3>
+        <br>
+        <h5>Premium Needed 💰</h5>
+        <br>
+        <p>For just a small, one time fee, you can have access to our movie section!<br><br>
+        This one time fee gives you access for life. No subscriptions. <br><br>
+        If you want to stick to tv shows for now, hit the button to move back.
+        </p>
+        <form action="{{url_for('retry') }}" method="post">
+          <button class="btn btn-secondary" role="button">Switch to TV 📺</button>
+        </form>
+      </div>
+      <div class="sl-wrapper">
+        <div class="verticalLine">
+          <div class="swiper-container2">
+            <div class="card">
+              <div class="card-img">
+                <h1 class="card_header">VIP</h1>
+              </div>
+              <div class="card-info">
+                <p class="text-title">Movie Access!</p>
+                <p class="text-body">Get access to finding movies with the click of a button.</p>
+              </div>
+              <div class="card-footer">
+              <span class="text-title">$5.00</span>
+                <form action="/create-checkout-session" method="POST">
+                  <button type="submit" id="checkout-button" class="btn btn-outline-dark">Checkout 🛒</button>
+                </form>
+            </div></div>
+              </div>
+          </div>
+        </div>
+      </div>

@@ -544,7 +544,7 @@ def create_checkout_session():
 
 @app.route('/cancel', methods=['POST', 'GET'])
 def cancel_session():
-    return render_template('cancel.html')
+    return redirect(url_for('find_movie'))
 
 @app.route('/success', methods=['POST', 'GET'])
 def success_session():
