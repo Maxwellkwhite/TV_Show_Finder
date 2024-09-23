@@ -152,7 +152,7 @@ class Movie_Filters(FlaskForm):
                                                               "Highly Rated"], render_kw={'class':'form_class'})
     popularity = SelectField("Popularity of Show", choices=["Popular", 
                                                             "Any Popularity",], render_kw={'class':'form_class'})
-    submit = SubmitField("Find your show")
+    submit = SubmitField("Find your movie")
 
 
 class User(UserMixin, db.Model):
