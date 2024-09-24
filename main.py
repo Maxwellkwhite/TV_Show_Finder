@@ -516,6 +516,7 @@ def movie_redirect():
     return redirect(url_for('find_movie'))
 
 YOUR_DOMAIN = 'http://127.0.0.1:5002'
+DOMAIN2 = 'https://find-it-the-tv-show-and-movie-randomizer.onrender.com'
 
 @app.route('/create-checkout-session', methods=['POST', 'GET'])
 def create_checkout_session():
@@ -529,8 +530,8 @@ def create_checkout_session():
                 'unit_amount': 299,},
                 'quantity': 1,}],
             mode='payment',
-            success_url=YOUR_DOMAIN + '/success',
-            cancel_url=YOUR_DOMAIN + '/cancel',)
+            success_url=DOMAIN2 + '/success',
+            cancel_url=DOMAIN2 + '/cancel',)
     except Exception as e:
         return str(e)
     return redirect(checkout_session.url, code=303)
