@@ -1,28 +1,23 @@
-from datetime import date
-from flask import Flask, abort, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
-from flask_gravatar import Gravatar
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, RadioField, SelectField, PasswordField, SelectMultipleField, BooleanField
+from wtforms import StringField, SubmitField, SelectField, PasswordField
 from wtforms.validators import DataRequired
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text
+from sqlalchemy import Integer, String
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
 import requests
 import random
-import json
 import stripe
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+import os
 
-API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3MmMwNDI3MmEzMjZhZDNiNTgzODdlMGVmYTkzOTNiNiIsIm5iZiI6MTcyNTYzNzkyOS4zMDg3NzgsInN1YiI6IjY2NmIzNDcyMmRmYzNhMjI1ZTVhYjRlMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dt6CNZe1TspH9bG5Y-kWE51xzS3sXRwoJGHnSqhRo_4'
+API_KEY = os.environ.get('MOVIE_API')
 ORIGIN_COUNTRY = 'US'
 VOTE_COUNT_MIN = 25
-stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
+stripe.api_key = os.environ.get('STRIPE_API')
 
 
 categories_dictionary = {'Action & Adventure': 10759, 
@@ -66,7 +61,7 @@ movies_categories ={
 app = Flask(__name__)
 ckeditor = CKEditor(app)
 Bootstrap5(app)
-app.config['SECRET_KEY'] = 'ABCD1234'
+app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -77,9 +72,8 @@ def load_user(user_id):
 
 class Base(DeclarativeBase):
     pass
-# db_path = os.path.abspath(os.path.join(os.path.dirname("./instance"), "users.db"))
-# app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", 'sqlite:///users.db')
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -162,7 +156,6 @@ class User(UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(100))
     premium: Mapped[int] = mapped_column(Integer)
-    # tasks = relationship("InProgressTaskList", back_populates="author")
 
 with app.app_context():
     db.create_all()
@@ -533,7 +526,7 @@ def create_checkout_session():
                 'currency': 'usd',
                 'product_data': {
                 'name': 'Movie Access',},
-                'unit_amount': 500,},
+                'unit_amount': 299,},
                 'quantity': 1,}],
             mode='payment',
             success_url=YOUR_DOMAIN + '/success',
@@ -555,57 +548,5 @@ def success_session():
         db.session.commit()
     return redirect(url_for('find_movie'))
 
-# def fulfill_checkout(session_id):
-#     print("Fulfilling Checkout Session", session_id)
-
-#     # TODO: Make this function safe to run multiple times,
-#     # even concurrently, with the same session ID
-
-#     # TODO: Make sure fulfillment hasn't already been
-#     # peformed for this Checkout Session
-
-#     # Retrieve the Checkout Session from the API with line_items expanded
-#     checkout_session = stripe.checkout.Session.retrieve(
-#     session_id,
-#     expand=['line_items'],)
-
-#     # Check the Checkout Session's payment_status property
-#     # to determine if fulfillment should be peformed
-#     if checkout_session.payment_status != 'unpaid':
-#     # TODO: Perform fulfillment of the line items
-#         print('Unpaid')
-#     # TODO: Record/save fulfillment status for this
-#     # Checkout Session
-#     else:
-#         print("Paid")
-
-# endpoint_secret = os.environ.get("WEBHOOK_SECRET")
-
-# @csrf_exempt
-# @app.route('/stripe_webhooks', methods=['POST'])
-# def my_webhook_view(request):
-#     payload = request.body
-#     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-#     event = None
-
-#     try:
-#         event = stripe.Webhook.construct_event(
-#         payload, sig_header, endpoint_secret
-#         )
-#     except ValueError as e:
-#         # Invalid payload
-#         return HttpResponse(status=400)
-#     except stripe.error.SignatureVerificationError as e:
-#         # Invalid signature
-#         return HttpResponse(status=400)
-
-#     if (
-#         event['type'] == 'checkout.session.completed'
-#         or event['type'] == 'checkout.session.async_payment_succeeded'
-#     ):
-#         fulfill_checkout(event['data']['object']['id'])
-
-#     return HttpResponse(status=200)
-
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    app.run(debug=False, port=5002)
