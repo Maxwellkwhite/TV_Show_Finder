@@ -516,11 +516,19 @@ def movie_redirect():
     return redirect(url_for('find_movie'))
 
 YOUR_DOMAIN = 'http://127.0.0.1:5002'
-DOMAIN2 = 'https://find-it-the-tv-show-and-movie-randomizer.onrender.com'
+DOMAIN2 = 'https://bingebuddy.us'
 
 @app.route('/create-checkout-session', methods=['POST', 'GET'])
 def create_checkout_session():
     try:
+        # stripe.Coupon.create(
+        # id="free-test",
+        # percent_off=100,
+        # )
+        # stripe.PromotionCode.create(
+        # coupon="free-test",
+        # code="FREETEST",
+        # )
         checkout_session = stripe.checkout.Session.create(
             line_items=[{
                 'price_data': {
@@ -530,6 +538,7 @@ def create_checkout_session():
                 'unit_amount': 299,},
                 'quantity': 1,}],
             mode='payment',
+            allow_promotion_codes = True,
             success_url=DOMAIN2 + '/success',
             cancel_url=DOMAIN2 + '/cancel',)
     except Exception as e:
