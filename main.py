@@ -521,14 +521,14 @@ DOMAIN2 = 'https://bingebuddy.us'
 @app.route('/create-checkout-session', methods=['POST', 'GET'])
 def create_checkout_session():
     try:
-        # stripe.Coupon.create(
-        # id="free-test",
-        # percent_off=100,
-        # )
-        # stripe.PromotionCode.create(
-        # coupon="free-test",
-        # code="FREETEST",
-        # )
+        stripe.Coupon.create(
+        id="free-test",
+        percent_off=100,
+        )
+        stripe.PromotionCode.create(
+        coupon="free-test",
+        code="FREETEST",
+        )
         checkout_session = stripe.checkout.Session.create(
             line_items=[{
                 'price_data': {
