@@ -16,7 +16,6 @@ import os
 
 API_KEY = os.environ.get('MOVIE_API')
 ORIGIN_COUNTRY = 'US'
-VOTE_COUNT_MIN = 25
 stripe.api_key = os.environ.get('STRIPE_API')
 
 
@@ -92,7 +91,7 @@ class LoginForm(FlaskForm):
 
 # Create a form to login existing users
 class TV_Filters(FlaskForm):
-    category = SelectField(label="Choose Category", choices=["Action & Adventure", 
+    category = SelectField(label="Choose TV Show Category", choices=["Action & Adventure", 
                                                        "Animation", 
                                                        "Comedy",
                                                        "Crime",
@@ -108,21 +107,21 @@ class TV_Filters(FlaskForm):
                                                        "Talk",
                                                        "War & Politics",
                                                        "Western"], render_kw={'class':'form_class'})
-    with_type = SelectField("Type", choices=["Scripted", 
+    with_type = SelectField("TV Show Type", choices=["Scripted", 
                                              "Documentary", 
                                              "Miniseries", 
                                              "Reality",  
                                              "Talk Show",
                                              "I Don't Care",], render_kw={'class':'form_class'})
-    quality_of_show = SelectField("Quality of Show", choices=["I Don't Care", 
+    quality_of_show = SelectField("Quality of TV Show", choices=["I Don't Care", 
                                                               "Decent or Better", 
                                                               "Highly Rated"], render_kw={'class':'form_class'})
-    popularity = SelectField("Popularity of Show", choices=["Popular", 
+    popularity = SelectField("Popularity of TV Show", choices=["Popular", 
                                                             "Any Popularity",], render_kw={'class':'form_class'})
     submit = SubmitField("Find your show")
 
 class Movie_Filters(FlaskForm):
-    category = SelectField(label="Choose Category", choices=['Action',
+    category = SelectField(label="Choose Movie Category", choices=['Action',
                                                              'Adventure',
                                                              'Animation', 
                                                              'Comedy', 
@@ -141,12 +140,12 @@ class Movie_Filters(FlaskForm):
                                                              'Thriller',
                                                              'War',
                                                              'Western',], render_kw={'class':'form_class'})
-    quality_of_movie = SelectField("Quality of Show", choices=["I Don't Care", 
+    quality_of_movie = SelectField("Quality of Movie", choices=["I Don't Care", 
                                                               "Decent or Better", 
                                                               "Highly Rated"], render_kw={'class':'form_class'})
-    popularity = SelectField("Popularity of Show", choices=["Popular", 
+    popularity = SelectField("Popularity of Movie", choices=["Popular", 
                                                             "Any Popularity",], render_kw={'class':'form_class'})
-    submit = SubmitField("Find your movie")
+    submit = SubmitField("Find your Movie")
 
 
 class User(UserMixin, db.Model):
@@ -202,14 +201,13 @@ def find_show():
         popularity_value = 0
         if popularity == "Popular":
             popularity_value = 750
-        else:
-            popularity_value = 0
+        elif popularity == "Any Popularity":
+            popularity_value = 25
         param = {
         "include_adult":"true",
         "with_origin_country": ORIGIN_COUNTRY,
         "with_genres": categories_dictionary[category],
         "vote_average.gte": quality,
-        "vote_count.gte": VOTE_COUNT_MIN,
         "page": page_to_fail,
         "with_type": type,
         "vote_count.gte":popularity_value,
@@ -229,7 +227,6 @@ def find_show():
                 "with_origin_country": ORIGIN_COUNTRY,
                 "with_genres": categories_dictionary[category],
                 "vote_average.gte": quality,
-                "vote_count.gte": VOTE_COUNT_MIN,
                 "page": random.randint(1, max_pages),
                 "with_type": type,
                 "vote_count.gte":popularity_value,
@@ -247,7 +244,6 @@ def find_show():
                 "with_origin_country": ORIGIN_COUNTRY,
                 "with_genres": categories_dictionary[category],
                 "vote_average.gte": quality,
-                "vote_count.gte": VOTE_COUNT_MIN,
                 "page": 1,
                 "with_type": type,
                 "vote_count.gte":popularity_value,
@@ -343,13 +339,12 @@ def find_movie():
         if popularity == "Popular":
             popularity_value = 1000
         else:
-            popularity_value = 0
+            popularity_value = 25
         param = {
         "include_adult":"true",
         "with_origin_country": ORIGIN_COUNTRY,
         "with_genres": movies_categories[category],
         "vote_average.gte": quality,
-        "vote_count.gte": VOTE_COUNT_MIN,
         "page": random.randint(1, page_to_fail),
         "vote_count.gte":popularity_value,
         }
@@ -368,7 +363,6 @@ def find_movie():
                 "with_origin_country": ORIGIN_COUNTRY,
                 "with_genres": movies_categories[category],
                 "vote_average.gte": quality,
-                "vote_count.gte": VOTE_COUNT_MIN,
                 "page": random.randint(1, max_pages),
                 "with_type": type,
                 "vote_count.gte":popularity_value,
@@ -386,7 +380,6 @@ def find_movie():
                 "with_origin_country": ORIGIN_COUNTRY,
                 "with_genres": movies_categories[category],
                 "vote_average.gte": quality,
-                "vote_count.gte": VOTE_COUNT_MIN,
                 "page": 1,
                 "with_type": type,
                 "vote_count.gte":popularity_value,

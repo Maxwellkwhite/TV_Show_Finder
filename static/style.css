@@ -193,6 +193,15 @@
       margin-top: 85px;
       margin-left: 30px;
     }
+    .swiper-container2 h5{
+      font-weight: 500;
+      text-transform: uppercase;
+      margin: 0;
+      line-height: 100%;
+      letter-spacing: -1.4px;
+      word-spacing: 2.4px;
+      font-size: 35px;
+    }
 
     .swiper-button-next,
     .swiper-button-prev {
@@ -504,6 +513,7 @@
     border: #aeaeaf !important;
     margin: auto !important ;
     width: auto !important;
+    font-size: 20px !important;
   }
 
 .header1{
@@ -621,4 +631,31 @@ label{
 }
 .ms-3{
   color: #527dab !important;
+}
+/* From Uiverse.io by Cornerstone-04 */ 
+.cards {
+  perspective: 500px;
+}
+
+.card {
+  width: 353px;
+  height: 195px;
+  /* background: #16161d; */
+  /* border: 2px solid #555555; */
+  border-radius: 4px;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform .5s;
+  margin: 0 auto; /* Added */
+  float: none; /* Added */
+}
+
+.card:hover {
+  transform: translateZ(10px) rotateX(20deg) rotateY(20deg);
+}
+
+
+.card:hover .card_title {
+  transform: translateZ(50px);
 }

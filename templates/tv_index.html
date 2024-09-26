@@ -20,19 +20,26 @@
       <div class="sl-header-wrapper">
         <h3>Welcome to Binge Buddy!</h3>
         <br>
-        <h5>TV Show Edition 📺</h5>
-        <br>
         <p>Can't choose your next binge? Well look no further...<br><br>
-        Set the filters and you'll have your next show in seconds! <br><br>
+        Set the filters and you'll have your next show/movie in seconds! <br><br>
         Yes, it's really that easy.
         </p>
-        <form action="{{url_for('movie_redirect') }}" method="post">
-          <button class="btn btn-secondary" role="button">Switch to Movies 🎥</button>
-        </form>
+        <br>
+        <div class="cards">
+            <figure class="card">
+              <img src="https://www.mensjournal.com/.image/ar_1.91%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cg_xy_center%2Cq_auto:good%2Cw_1200%2Cx_888%2Cy_1050/MjA0ODcxNTg2MzMzODYxMjEw/fallout-tv-series-poster.jpg" width="325">
+            </figure>
+        </div>
       </div>
         <div class="sl-wrapper">
           <div class="verticalLine">
             <div class="swiper-container2">
+              <h5>TV Show Edition 📺</h5>
+              <br>
+              <form action="{{url_for('movie_redirect') }}" method="post">
+                <button class="btn btn-secondary" role="button">Switch to Movies 🎥</button>
+              </form>
+              <br>
               {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
             </div>
           </div>

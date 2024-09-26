@@ -21,19 +21,26 @@
       <div class="sl-header-wrapper">
         <h3>Binge Buddy</h3>
         <br>
-        <h5>Movie Edition 🎥</h5>
-        <br>
         <p>Can't choose your next movie night? Well look no further...<br><br>
         Set the filters and you'll have your next movie in seconds! <br><br>
         Yes, it's really that easy.
         </p>
-        <form action="{{url_for('retry') }}" method="post">
-          <button class="btn btn-secondary" role="button">Switch to TV 📺</button>
-        </form>
+        <br>
+        <div class="cards">
+          <figure class="card">
+            <img src="https://pbs.twimg.com/media/D2jvOdmUgAALnnx?format=jpg&name=medium" width="325">
+          </figure>
+      </div>
       </div>
         <div class="sl-wrapper">
           <div class="verticalLine">
             <div class="swiper-container2">
+              <h5>Movie Edition 🎥</h5>
+              <br>
+              <form action="{{url_for('retry') }}" method="post">
+                <button class="btn btn-secondary" role="button">Switch to TV 📺</button>
+              </form>
+              <br>
               {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
             </div>
           </div>
