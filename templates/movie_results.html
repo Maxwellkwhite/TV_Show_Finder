@@ -41,6 +41,10 @@
                   </svg>
             </div>
           </div>
+          <form action="{{url_for('movie_redirect') }}" method="post">
+            <button class="btn btn-secondary" role="button">Back to the Movie Search</button>
+          </form>
+          <br>
         </div>
         <div class="sl-wrapper">
           <!-- Slider main container -->
@@ -208,33 +212,7 @@
                 </div>
               </div>
               {%endif%}
-              <div class="swiper-slide sl--slide">
-                <div class="slide-cover"></div>
-                <div class="sl-card-wrapper">
-                  <div class="sl-gradient"></div>
-                  <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTFhZHN5a2ljNWEwankwN3FuaDVzOWgwdHp4NWtsN3N3MnJydzc0YyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ilkfz8Mn5Yz7O/giphy.gif" height="375">
-                  <div class="sl--content-wrapper sl--content-wrapper-inactive">
-                    <div class="sl--content-container sl--card-hide">
-                        <h2>Didn't like these?</h2>
-                        <p class="sl--card-content">Click the button to adjust your filters or try again.</p>
-                        <form action="{{url_for('retry') }}" method="post">
-                            <button class="btn btn-primary" role="button">New Search</button>
-                        </form>
-                    </div>
-
-                    <!-- Card Nav GRP -->
-                    <div class="sl--card-nav-container">
-                      <!-- Reveal info btn -->
-                      <div class="sl--content-btn content-reveal-btn">
-                        <svg class="card-nav-gfx sl--show-card-info" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 113.63 113.63">
-                              <path d="M105.56 48.75H64.88V8.06a8.06 8.06 0 0 0-16.12 0v40.69H8.06a8.06 8.06 0 0 0 0 16.13h40.69v40.69a8.06 8.06 0 0 0 16.13 0V64.88h40.69a8.06 8.06 0 0 0 0-16.12z"/>
-                            </svg>
-                      </div>
-                    </div>
-                    <!-- END: Card Nav GRP -->
-                  </div>
-                </div>
-              </div>
+              
             </div>
             <!-- If we need pagination -->
             <!-- <div class="swiper-pagination"></div> -->
