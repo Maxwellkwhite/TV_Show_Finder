@@ -91,7 +91,7 @@ class LoginForm(FlaskForm):
 
 # Create a form to login existing users
 class TV_Filters(FlaskForm):
-    category = SelectField(label="Choose TV Show Category", choices=["Action & Adventure", 
+    category = SelectField(label="TV Show Category", choices=["Action & Adventure", 
                                                        "Animation", 
                                                        "Comedy",
                                                        "Crime",
@@ -121,7 +121,7 @@ class TV_Filters(FlaskForm):
     submit = SubmitField("Find your show")
 
 class Movie_Filters(FlaskForm):
-    category = SelectField(label="Choose Movie Category", choices=['Action',
+    category = SelectField(label="Movie Category", choices=['Action',
                                                              'Adventure',
                                                              'Animation', 
                                                              'Comedy', 
