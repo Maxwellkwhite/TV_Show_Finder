@@ -3,7 +3,7 @@ from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, PasswordField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Email
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String
 from flask_sqlalchemy import SQLAlchemy
@@ -78,7 +78,7 @@ db.init_app(app)
 
 # Create a form to register new users
 class RegisterForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired()], render_kw={'class': 'form_class'})
+    email = StringField("Email", validators=[DataRequired(), Email() ], render_kw={'class': 'form_class'})
     password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
     name = StringField("Name", validators=[DataRequired()], render_kw={'class': 'form_class'})
     submit = SubmitField("Sign Me Up!")
