@@ -78,7 +78,7 @@ db.init_app(app)
 
 # Create a form to register new users
 class RegisterForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired(), Email() ], render_kw={'class': 'form_class'})
+    email = StringField("Email", validators=[DataRequired() ], render_kw={'class': 'form_class'})
     password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
     name = StringField("Name", validators=[DataRequired()], render_kw={'class': 'form_class'})
     submit = SubmitField("Sign Me Up!")
