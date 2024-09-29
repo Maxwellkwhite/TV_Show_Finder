@@ -551,5 +551,13 @@ def success_session():
         db.session.commit()
     return redirect(url_for('find_movie'))
 
+@app.route('/privacy-policy', methods=['POST', 'GET'])
+def privacy_policy():
+    return render_template("privacy_policy.html")
+
+@app.route('/terms-and-conditions', methods=['POST', 'GET'])
+def terms_and_conditions():
+    return render_template("terms_and_conditions.html")
+
 if __name__ == "__main__":
     app.run(debug=False, port=5002)
