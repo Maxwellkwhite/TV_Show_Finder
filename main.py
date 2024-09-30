@@ -162,6 +162,13 @@ with app.app_context():
 @app.route('/', methods=["GET", "POST"])
 def find_show():
     form=TV_Filters()
+    ###how I can change a password on the fly
+    # completed_update = db.session.execute(db.select(User).where(User.id == 7)).scalar()
+    # completed_update.password = generate_password_hash(
+    #         "test",
+    #         method='pbkdf2:sha256',
+    #         salt_length=8)
+    # db.session.commit()
     if form.validate_on_submit():
         list = []
         five_shows = []
@@ -558,6 +565,7 @@ def privacy_policy():
 @app.route('/terms-and-conditions', methods=['POST', 'GET'])
 def terms_and_conditions():
     return render_template("terms_and_conditions.html")
+
 
 if __name__ == "__main__":
     app.run(debug=False, port=5002)
