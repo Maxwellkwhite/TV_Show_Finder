@@ -89,6 +89,12 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
     submit = SubmitField("Let Me In!")
 
+class ChangePassword(FlaskForm):
+    email = StringField("Email", validators=[DataRequired()], render_kw={'class': 'form_class'})
+    password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
+    new_password = PasswordField("New Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
+    submit = SubmitField("Change Password")
+
 # Create a form to login existing users
 class TV_Filters(FlaskForm):
     category = SelectField(label="TV Show Category", choices=["Action & Adventure", 
@@ -565,6 +571,36 @@ def privacy_policy():
 @app.route('/terms-and-conditions', methods=['POST', 'GET'])
 def terms_and_conditions():
     return render_template("terms_and_conditions.html")
+
+@app.route('/change-password', methods=["GET", "POST"])
+def change_password():
+    form = ChangePassword()
+    g_user = current_user.get_id()
+    if form.validate_on_submit():
+        password = form.password.data
+        new_password = form.new_password.data
+        result = db.session.execute(db.select(User).where(User.email == form.email.data))
+        # Note, email in db is unique so will only have one result.
+        user = result.scalar()
+        # Email doesn't exist
+        if not user:
+            flash("That email does not exist, please try again.")
+            return redirect(url_for('change_password'))
+        # Password incorrect
+        elif not check_password_hash(user.password, password):
+            flash('Password incorrect, please try again.')
+            return redirect(url_for('change_password'))
+        else:
+            completed_update = db.session.execute(db.select(User).where(User.id == g_user)).scalar()
+            completed_update.password = generate_password_hash(
+                    new_password,
+                    method='pbkdf2:sha256',
+                    salt_length=8)
+            db.session.commit()
+            flash('Password Changed')
+            return redirect(url_for('change_password'))
+
+    return render_template("change_password.html", form=form, current_user=current_user)
 
 
 if __name__ == "__main__":
