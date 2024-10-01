@@ -13,6 +13,8 @@ import requests
 import random
 import stripe
 import os
+import smtplib
+
 
 API_KEY = os.environ.get('MOVIE_API')
 ORIGIN_COUNTRY = 'US'
@@ -94,6 +96,10 @@ class ChangePassword(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
     new_password = PasswordField("New Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
     submit = SubmitField("Change Password")
+
+class Feedback(FlaskForm):
+    feedback = StringField("Feedback", validators=[DataRequired()], render_kw={'class': 'form_class'})
+    submit = SubmitField("Provide Feedback")
 
 # Create a form to login existing users
 class TV_Filters(FlaskForm):
@@ -602,6 +608,22 @@ def change_password():
 
     return render_template("change_password.html", form=form, current_user=current_user)
 
+@app.route('/feedback', methods=['POST', 'GET'])
+def feedback():
+    form=Feedback()
+    if form.validate_on_submit():
+        feedback = form.feedback.data
+        my_email = "mwdynamicsinc@gmail.com"
+        password = "wedxfcmtdfnbdjbt "
+        connection = smtplib.SMTP("smtp.gmail.com", 587)
+        connection.starttls()
+        connection.login(user=my_email, password=password)
+        connection.sendmail(from_addr=my_email, 
+                            to_addrs="maxwell.white617@gmail.com", 
+                            msg=f"Subject:Feedback from Binge Buddy!\n\nFeedback: {feedback}",
+                            )
+        connection.close()
+    return render_template("feedback.html", form=form)
 
 if __name__ == "__main__":
     app.run(debug=False, port=5002)
