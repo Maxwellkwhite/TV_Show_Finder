@@ -28,6 +28,13 @@
         <div class="sl-wrapper">
           <div class="verticalLine">
             <div class="swiper-container2">
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+              {% for message in messages %}
+              <p class="flash">{{ message }}</p>
+              {% endfor %}
+              {% endif %}
+              {% endwith %}
               {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
               <br>
               When you are ready: <a href="{{url_for('find_show')}}">Home.</a>

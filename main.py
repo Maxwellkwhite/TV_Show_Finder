@@ -613,16 +613,17 @@ def feedback():
     form=Feedback()
     if form.validate_on_submit():
         feedback = form.feedback.data
-        my_email = "mwdynamicsinc@gmail.com"
-        password = "wedxfcmtdfnbdjbt "
+        my_email = os.environ.get('FROM_EMAIL')
+        password = os.environ.get('EMAIL_PASS')
         connection = smtplib.SMTP("smtp.gmail.com", 587)
         connection.starttls()
         connection.login(user=my_email, password=password)
         connection.sendmail(from_addr=my_email, 
-                            to_addrs="maxwell.white617@gmail.com", 
+                            to_addrs=os.environ.get('TO_EMAIL'), 
                             msg=f"Subject:Feedback from Binge Buddy!\n\nFeedback: {feedback}",
                             )
         connection.close()
+        flash('Feedback received! Thank you for taking the time to help.')
     return render_template("feedback.html", form=form)
 
 if __name__ == "__main__":
