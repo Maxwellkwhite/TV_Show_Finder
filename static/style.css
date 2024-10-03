@@ -654,6 +654,7 @@ label{
   margin: 0 auto; /* Added */
   float: none; /* Added */
   margin-top: 12px;
+  margin-bottom: 10px;
 }
 .card:hover {
   transform: translateZ(10px) rotateX(20deg) rotateY(20deg);
