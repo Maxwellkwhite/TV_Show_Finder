@@ -2,23 +2,18 @@ from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, PasswordField
-from wtforms.validators import DataRequired, Email
-from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import DataRequired
+from sqlalchemy.orm import DeclarativeBase
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
-from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 import random
-import stripe
 import os
 import smtplib
 
 
 API_KEY = os.environ.get('MOVIE_API')
 ORIGIN_COUNTRY = 'US'
-stripe.api_key = os.environ.get('STRIPE_API')
 
 
 categories_dictionary = {'Action & Adventure': 10759, 
@@ -64,13 +59,6 @@ ckeditor = CKEditor(app)
 Bootstrap5(app)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.get_or_404(User, user_id)
-
 class Base(DeclarativeBase):
     pass
 
@@ -78,30 +66,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", 'sqlite:///user
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
-# Create a form to register new users
-class RegisterForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired() ], render_kw={'class': 'form_class'})
-    password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
-    name = StringField("Name", validators=[DataRequired()], render_kw={'class': 'form_class'})
-    submit = SubmitField("Sign Me Up!")
-
-# Create a form to login existing users
-class LoginForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired()], render_kw={'class': 'form_class'})
-    password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
-    submit = SubmitField("Let Me In!")
-
-class ChangePassword(FlaskForm):
-    email = StringField("Email", validators=[DataRequired()], render_kw={'class': 'form_class'})
-    password = PasswordField("Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
-    new_password = PasswordField("New Password", validators=[DataRequired()], render_kw={'class': 'form_class'})
-    submit = SubmitField("Change Password")
-
 class Feedback(FlaskForm):
     feedback = StringField("Feedback", validators=[DataRequired()], render_kw={'class': 'form_class'})
     submit = SubmitField("Provide Feedback")
 
-# Create a form to login existing users
 class TV_Filters(FlaskForm):
     category = SelectField(label="TV Show Category", choices=["Action & Adventure", 
                                                        "Animation", 
@@ -159,28 +127,12 @@ class Movie_Filters(FlaskForm):
                                                             "Any Popularity",], render_kw={'class':'form_class'})
     submit = SubmitField("Find your Movie")
 
-
-class User(UserMixin, db.Model):
-    __tablename__ = "users"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    email: Mapped[str] = mapped_column(String(100), unique=True)
-    password: Mapped[str] = mapped_column(String(100))
-    name: Mapped[str] = mapped_column(String(100))
-    premium: Mapped[int] = mapped_column(Integer)
-
 with app.app_context():
     db.create_all()
 
 @app.route('/', methods=["GET", "POST"])
 def find_show():
     form=TV_Filters()
-    ###how I can change a password on the fly
-    # completed_update = db.session.execute(db.select(User).where(User.id == 7)).scalar()
-    # completed_update.password = generate_password_hash(
-    #         "test",
-    #         method='pbkdf2:sha256',
-    #         salt_length=8)
-    # db.session.commit()
     if form.validate_on_submit():
         list = []
         five_shows = []
@@ -275,24 +227,17 @@ def find_show():
                 data = response.json()
             for x in range (data['total_results']):
                 if data['total_results'] <= 19 and data['total_results'] >= 1:
-                    # x = data['results'][random.randint(0,data['total_results']-1)]['name']
-                    # show = data['results'][random.randint(0,data['total_results']-1)]
                     show = data['results'][x]
                     list.append(show['name'])
                     full_details.append(show)
                 elif data['total_results'] == 0:
                     pass
                 else:
-                    # x = data['results'][random.randint(0,19)]['name']
                     show = data['results'][random.randint(0,19)]
                     list.append(show['name'])
                     full_details.append(show)
-            # myset = sorted(set(list))
             for x in range(5):
                 try:
-                    # chosen_show = random.choice(myset)
-                    # five_shows.append(chosen_show)
-                    # myset.remove(chosen_show)
                     chosen_show = random.choice(full_details)
                     while chosen_show in five_shows:
                         chosen_show = random.choice(full_details)
@@ -307,8 +252,6 @@ def find_show():
             seasons.append(show_season)
             show_episodes = data['number_of_episodes']
             episodes.append(show_episodes)
-            # id = data['id']
-            # show_id.append(id)
             homepage_link = data['homepage']
             homepage.append(homepage_link)
         return render_template('tv_results.html', 
@@ -321,15 +264,12 @@ def find_show():
                                type=with_type,
                                seasons=seasons,
                                episodes=episodes,
-                            #    id=id,
                                homepage=homepage)
     return render_template("tv_index.html", form=form)
 
 @app.route('/movie', methods=["GET", "POST"])
 def find_movie():
     form=Movie_Filters()
-    if not current_user.is_authenticated:
-       return redirect(url_for('login'))
     if form.validate_on_submit():
         list = []
         five_movies = []
@@ -411,24 +351,17 @@ def find_movie():
                 movie_data = response.json()
             for x in range (movie_data['total_results']):
                 if movie_data['total_results'] <= 19 and movie_data['total_results'] >= 1:
-                    # x = data['results'][random.randint(0,data['total_results']-1)]['name']
-                    # show = data['results'][random.randint(0,data['total_results']-1)]
                     show = movie_data['results'][x]
                     list.append(show['title'])
                     full_details.append(show)
                 elif movie_data['total_results'] == 0:
                     pass
                 else:
-                    # x = data['results'][random.randint(0,19)]['name']
                     show = movie_data['results'][random.randint(0,19)]
                     list.append(show['title'])
                     full_details.append(show)
-            # myset = sorted(set(list))
             for x in range(5):
                 try:
-                    # chosen_show = random.choice(myset)
-                    # five_shows.append(chosen_show)
-                    # myset.remove(chosen_show)
                     chosen_movie = random.choice(full_details)
                     while chosen_movie in five_movies:
                         chosen_movie = random.choice(full_details)
@@ -445,8 +378,6 @@ def find_movie():
             budget_list.append(budget)
             runtime = movie_data['runtime']
             runtime_list.append(runtime)
-            # id = data['id']
-            # show_id.append(id)
         return render_template('movie_results.html', 
                                category=category, 
                                five_movies=five_movies, 
@@ -461,113 +392,12 @@ def find_movie():
                                runtime=runtime_list)
     return render_template("movie_index.html", form=form)
 
-@app.route('/register', methods=["GET", "POST"])
-def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-
-        # Check if user email is already present in the database.
-        result = db.session.execute(db.select(User).where(User.email == form.email.data))
-        user = result.scalar()
-        if user:
-            # User already exists
-            flash("You've already signed up with that email, log in instead!")
-            return redirect(url_for('login'))
-
-        hash_and_salted_password = generate_password_hash(
-            form.password.data,
-            method='pbkdf2:sha256',
-            salt_length=8
-        )
-        new_user = User(
-            email=form.email.data,
-            name=form.name.data,
-            password=hash_and_salted_password,
-            premium=0
-        )
-        db.session.add(new_user)
-        db.session.commit()
-        # This line will authenticate the user with Flask-Login
-        login_user(new_user)
-        return redirect(url_for("find_movie"))
-    return render_template("register.html", form=form, current_user=current_user)
-
-@app.route('/login', methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        password = form.password.data
-        result = db.session.execute(db.select(User).where(User.email == form.email.data))
-        # Note, email in db is unique so will only have one result.
-        user = result.scalar()
-        # Email doesn't exist
-        if not user:
-            flash("That email does not exist, please try again.")
-            return redirect(url_for('login'))
-        # Password incorrect
-        elif not check_password_hash(user.password, password):
-            flash('Password incorrect, please try again.')
-            return redirect(url_for('login'))
-        else:
-            login_user(user)
-            return redirect(url_for('find_movie'))
-
-    return render_template("login.html", form=form, current_user=current_user)
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('find_movie'))
-
 @app.route('/retry', methods=["GET", "POST"])
 def retry():
     return redirect(url_for('find_show'))
 
 @app.route('/search-movie', methods=["GET", "POST"])
 def movie_redirect():
-    return redirect(url_for('find_movie'))
-
-YOUR_DOMAIN = 'http://127.0.0.1:5002'
-DOMAIN2 = 'https://bingebuddy.us'
-
-@app.route('/create-checkout-session', methods=['POST', 'GET'])
-def create_checkout_session():
-    try:
-        # stripe.Coupon.create(
-        # id="free-test",
-        # percent_off=100,
-        # )
-        # stripe.PromotionCode.create(
-        # coupon="free-test",
-        # code="FREETEST",
-        # )
-        checkout_session = stripe.checkout.Session.create(
-            line_items=[{
-                'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                'name': 'Movie Access',},
-                'unit_amount': 299,},
-                'quantity': 1,}],
-            mode='payment',
-            allow_promotion_codes = True,
-            success_url=DOMAIN2 + '/success',
-            cancel_url=DOMAIN2 + '/cancel',)
-    except Exception as e:
-        return str(e)
-    return redirect(checkout_session.url, code=303)
-
-@app.route('/cancel', methods=['POST', 'GET'])
-def cancel_session():
-    return redirect(url_for('find_movie'))
-
-@app.route('/success', methods=['POST', 'GET'])
-def success_session():
-    with app.app_context():
-        g_user = current_user.get_id()
-        completed_update = db.session.execute(db.select(User).where(User.id == g_user)).scalar()
-        completed_update.premium = 1
-        db.session.commit()
     return redirect(url_for('find_movie'))
 
 @app.route('/privacy-policy', methods=['POST', 'GET'])
@@ -577,36 +407,6 @@ def privacy_policy():
 @app.route('/terms-and-conditions', methods=['POST', 'GET'])
 def terms_and_conditions():
     return render_template("terms_and_conditions.html")
-
-@app.route('/change-password', methods=["GET", "POST"])
-def change_password():
-    form = ChangePassword()
-    g_user = current_user.get_id()
-    if form.validate_on_submit():
-        password = form.password.data
-        new_password = form.new_password.data
-        result = db.session.execute(db.select(User).where(User.email == form.email.data))
-        # Note, email in db is unique so will only have one result.
-        user = result.scalar()
-        # Email doesn't exist
-        if not user:
-            flash("That email does not exist, please try again.")
-            return redirect(url_for('change_password'))
-        # Password incorrect
-        elif not check_password_hash(user.password, password):
-            flash('Password incorrect, please try again.')
-            return redirect(url_for('change_password'))
-        else:
-            completed_update = db.session.execute(db.select(User).where(User.id == g_user)).scalar()
-            completed_update.password = generate_password_hash(
-                    new_password,
-                    method='pbkdf2:sha256',
-                    salt_length=8)
-            db.session.commit()
-            flash('Password Changed')
-            return redirect(url_for('change_password'))
-
-    return render_template("change_password.html", form=form, current_user=current_user)
 
 @app.route('/feedback', methods=['POST', 'GET'])
 def feedback():
