@@ -4,8 +4,6 @@ from flask_ckeditor import CKEditor
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
-from sqlalchemy.orm import DeclarativeBase
-from flask_sqlalchemy import SQLAlchemy
 import requests
 import random
 import os
@@ -58,13 +56,6 @@ app = Flask(__name__)
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
-
-class Base(DeclarativeBase):
-    pass
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", 'sqlite:///users.db')
-db = SQLAlchemy(model_class=Base)
-db.init_app(app)
 
 class Feedback(FlaskForm):
     feedback = StringField("Feedback", validators=[DataRequired()], render_kw={'class': 'form_class'})
@@ -126,9 +117,6 @@ class Movie_Filters(FlaskForm):
     popularity = SelectField("Popularity of Movie", choices=["Popular", 
                                                             "Any Popularity",], render_kw={'class':'form_class'})
     submit = SubmitField("Find your Movie")
-
-with app.app_context():
-    db.create_all()
 
 @app.route('/', methods=["GET", "POST"])
 def find_show():
